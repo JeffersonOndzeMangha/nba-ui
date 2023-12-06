@@ -2,20 +2,15 @@ import playersReducer, { PlayersStateProps } from './playersSlice';
 
 describe('players reducer', () => {
   const initialState: PlayersStateProps = {
-    players: [],
-    favoritePlayers: [],
-    filteredPlayers: [],
+    players: {},
+    favoritePlayers: {},
+    filteredPlayers: {},
     filters: {},
     view: 'all',
     status: 'idle',
   };
   it('should handle initial state', () => {
-    expect(playersReducer(undefined, { type: 'unknown' })).toEqual({
-      players: [],
-      filters: [],
-      view: 'all',
-      status: 'idle',
-    });
+    expect(playersReducer(undefined, { type: 'unknown' })).toEqual(initialState);
   });
 
   // it('should handle increment', () => {
