@@ -1,12 +1,16 @@
+import { getState } from "../../app/store";
+
 // A mock function to mimic making an async request for data
-export function fetchPlayers(search?: string, filters?: {
+export function fetchPlayers(search?: string, newMeta?: {
   [key: string]: string | number;
 }) {
+  const { currentMeta } = getState().players;
+
   return new Promise<{data: any[], meta: any}>((resolve, reject) =>
     fetch(`https://www.balldontlie.io/api/v1/players?${
       search ? `search=${search}` : ''
     }${
-      filters ? `&${Object.keys(filters).map((key) => `${key}=${filters[key]}`).join('&')}` : ''
+      newMeta ? `&${Object.keys(newMeta).map((key) => `${key}=${newMeta[key]}`).join('&')}` : ''
     }`).then((response) =>
       response
         .json()
