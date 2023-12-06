@@ -8,10 +8,10 @@ import {
   setView,
 } from './playersSlice';
 import styles from './Players.module.css';
-import { Divider, Grid, Input } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
 import PlayerCardList from './PlayerCardList';
-import { add, size, values } from 'lodash';
+import { values } from 'lodash';
+import { Grid, TextField } from '@mui/material';
 
 export function Players() {
   const { players, favoritePlayers } = useAppSelector((state) => state.players);
@@ -30,8 +30,9 @@ export function Players() {
       padding: 10
     }}>
       <Grid item xs={6}>
-        <Input
+        <TextField
           fullWidth
+          variant={'standard'}
           placeholder="Search for players"
           inputProps={{ 'aria-label': 'description' }}
           value={searchValue}
@@ -58,7 +59,6 @@ export function Players() {
         </button>
       </div>
       <Grid item xs={12}>
-        <Divider />
       </Grid>
       <Grid item xs={12} md={6}>
         <PlayerCardList
