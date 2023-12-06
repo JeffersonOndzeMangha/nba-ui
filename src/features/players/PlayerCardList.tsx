@@ -43,7 +43,9 @@ const PlayerCardList = (props: CardListProps) => {
                         </TableHead>
                         <TableBody>
                             {list.map((player: any) => (
-                                <TableRow key={player.id}>
+                                <TableRow key={player.id} sx={{
+                                    '&:last-child td, &:last-child th': { border: 0 }
+                                }}>
                                     <TableCell><Typography>{player.first_name} {player.last_name}</Typography></TableCell>
                                     <TableCell><Typography>{player.position}</Typography></TableCell>
                                     <TableCell><Typography>{player.team.full_name}</Typography></TableCell>
