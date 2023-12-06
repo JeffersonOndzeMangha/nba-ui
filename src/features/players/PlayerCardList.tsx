@@ -1,21 +1,23 @@
-import { Autocomplete, Button, Chip, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Autocomplete, IconButton, InputLabel, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
 import MainCard from "../../app/components/MainCard";
 import { Player } from "../../app/types/Player";
 import { useAppSelector } from "../../app/hooks";
 import { StarOutline, StarTwoTone } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { groupBy, keys } from "lodash";
+import { Divider, Tab } from "@material-ui/core";
 
 interface CardListProps {
     list: Player[];
     title: string;
+    pagination?: boolean;
     addToFavorites?: (player: any) => void;
     removeFromFavorites: (player: any) => void;
 }
 
 const PlayerCardList = (props: CardListProps) => {
-    const { list, title, addToFavorites, removeFromFavorites } = props;
-    const { favoritePlayers } = useAppSelector((state) => state.players);
+    const { list, title, pagination, addToFavorites, removeFromFavorites } = props;
+    const { favoritePlayers, currentMeta } = useAppSelector((state) => state.players);
     const [filters, setFilters] = useState({
         position: [] as any,
         team: [] as any
@@ -60,32 +62,43 @@ const PlayerCardList = (props: CardListProps) => {
                             <TableRow sx={{
                                 '&::first-of-type td, &::first-of-type th': { border: 0 }
                             }}>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Position</TableCell>
-                                <TableCell>Team</TableCell>
-                                <TableCell></TableCell>
+                                {
+                                    pagination &&
+                                    <TablePagination
+                                        count={currentMeta.total_count}
+                                        page={currentMeta.current_page-1}
+                                        onPageChange={() => { console.log('page change') }}
+                                        variant="head"
+                                        color="secondary"
+                                        rowsPerPage={currentMeta.per_page}
+                                        onRowsPerPageChange={() => { console.log('rows per page') }}
+                                    />
+                                }
                             </TableRow>
-                            <TableRow>
+                            <TableRow sx={{
+                                '&::first-of-type td, &::first-of-type th': { border: 0 }
+                            }}>
+                                <TableCell>Name</TableCell>
                                 <TableCell>
-                                </TableCell>
-                                <TableCell>
+                                    <InputLabel>Position</InputLabel>
                                     <Autocomplete
                                         fullWidth
                                         options={positionsFilters}
                                         value={filters.position ?? []}
                                         multiple
                                         onChange={(e, value) => setFilters({ ...filters, position: value })}
-                                        renderInput={(params) => <TextField variant={'standard'} {...params} placeholder="Filter by position" />}
+                                        renderInput={(params) => <TextField variant={'standard'} {...params} placeholder="Filter" />}
                                     />
                                 </TableCell>
                                 <TableCell>
+                                    <InputLabel>Team</InputLabel>
                                     <Autocomplete
                                         fullWidth
                                         multiple
                                         options={teamsFilters}
                                         value={filters.team ?? []}
                                         onChange={(e, value) => setFilters({ ...filters, team: value })}
-                                        renderInput={(params) => <TextField variant={'standard'} {...params} placeholder="Filter by team" />}
+                                        renderInput={(params) => <TextField variant={'standard'} {...params} placeholder="Filter" />}
                                     />
                                 </TableCell>
                                 <TableCell></TableCell>
@@ -113,6 +126,23 @@ const PlayerCardList = (props: CardListProps) => {
                                     </TableCell>
                                 </TableRow>
                             ))}
+                            <TableRow>
+                            {
+                                pagination &&
+                                <TablePagination
+                                    sx={{
+                                        borderBottom: 0
+                                    }}
+                                    count={currentMeta.total_count}
+                                    page={currentMeta.current_page-1}
+                                    onPageChange={() => { console.log('page change') }}
+                                    variant="footer"
+                                    color="secondary"
+                                    rowsPerPage={currentMeta.per_page}
+                                    onRowsPerPageChange={() => { console.log('rows per page') }}
+                                />
+                            }
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>

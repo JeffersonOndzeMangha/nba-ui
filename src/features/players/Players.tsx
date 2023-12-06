@@ -58,6 +58,7 @@ export function Players() {
         <PlayerCardList
           list={values(players)}
           title="Players"
+          pagination
           addToFavorites={(player) => dispatch(addToFavorites(player))}
           removeFromFavorites={(player) => dispatch(removeFromFavorites(player))}
         />
