@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { Grid } from '@material-ui/core';
-import { Players } from './features/players/Players';
+import { Players } from './app/pages/players';
 
 function App() {
   return (

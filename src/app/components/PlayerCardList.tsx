@@ -1,11 +1,11 @@
 import { Autocomplete, IconButton, InputLabel, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
-import MainCard from "../../app/components/MainCard";
-import { Player } from "../../app/types/Player";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import MainCard from "./MainCard";
+import { Player } from "../types/Player";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { StarOutline, StarTwoTone } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { groupBy, keys } from "lodash";
-import { setNewMeta } from "./playersSlice";
+import { setNewMeta } from "../store/playersSlice";
 
 interface CardListProps {
     list: Player[];

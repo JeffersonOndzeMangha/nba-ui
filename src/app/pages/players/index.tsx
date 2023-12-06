@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import {
   addToFavorites,
   fetch,
   removeFromFavorites
-} from './playersSlice';
-import styles from './Players.module.css';
+} from '../../store/playersSlice';
+import styles from '../../styles/Players.module.css'
 import { Search } from '@material-ui/icons';
-import PlayerCardList from './PlayerCardList';
+import PlayerCardList from '../../components/PlayerCardList';
 import { values } from 'lodash';
 import { Grid, TextField } from '@mui/material';
 

@@ -1,5 +1,5 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import playersReducer from '../features/players/playersSlice';
+import playersReducer from './playersSlice';
 import { debounce } from 'lodash';
 
 // Load state from local storage

@@ -1,4 +1,4 @@
-import { getState } from "../../app/store";
+import { getState } from "../store/store";
 
 // A mock function to mimic making an async request for data
 export function fetchPlayers(search?: string, newMeta?: {

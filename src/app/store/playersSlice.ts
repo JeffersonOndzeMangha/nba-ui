@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { store, getState } from '../../app/store';
-import { fetchPlayers } from './playersAPI';
-import { Player } from '../../app/types/Player';
+import { store, getState } from './store';
+import { fetchPlayers } from '../api/playersAPI';
+import { Player } from '../types/Player';
 
 export interface PlayersStateProps {
   players: {
