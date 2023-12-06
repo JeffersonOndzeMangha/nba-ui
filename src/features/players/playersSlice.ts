@@ -38,7 +38,6 @@ export const playersSlice = createSlice({
   reducers: {
     setPlayers: (state, action: PayloadAction<any>) => {
       state.players = {
-        ...state.players,
         ...action.payload.reduce((acc: any, player: any) => {
           acc[player.id] = player;
           return acc;
@@ -72,7 +71,7 @@ export const playersSlice = createSlice({
   },
 });
 
-export const { setPlayers, addToFavorites, removeFromFavorites  } = playersSlice.actions;
+export const { setPlayers, addToFavorites, removeFromFavorites, setView  } = playersSlice.actions;
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(fetchPlayers(10))`. This
@@ -93,13 +92,11 @@ export const fetch = createAsyncThunk(
 // Here's an example of conditionally dispatching actions based on current state.
 export const searchPlayers =
   (search: string): AppThunk =>
-  (dispatch, getState) => {
-    const { players } = getState().players;
-    const filteredPlayers = values(players).filter((player) => {
-      const fullName = `${player.first_name} ${player.last_name}`;
-      return fullName.toLowerCase().includes(search.toLowerCase());
-    });
-    dispatch(setPlayers(filteredPlayers));
+  async (dispatch, getState) => {
+    const { data } = await fetchPlayers(search);
+    console.log('response', data);
+    dispatch(setView('filtered'));
+    dispatch(setPlayers(data));
   };
 
 export default playersSlice.reducer;

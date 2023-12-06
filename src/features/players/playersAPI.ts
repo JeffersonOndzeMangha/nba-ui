@@ -2,7 +2,7 @@
 export function fetchPlayers(search?: string, filters?: {
   [key: string]: string | number;
 }) {
-  return new Promise<{ data: {data: any[], meta: any} }>((resolve, reject) =>
+  return new Promise<{data: any[], meta: any}>((resolve, reject) =>
     fetch(`https://www.balldontlie.io/api/v1/players?${
       search ? `search=${search}` : ''
     }${

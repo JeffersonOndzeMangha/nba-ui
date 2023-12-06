@@ -5,6 +5,7 @@ import {
   fetch,
   removeFromFavorites,
   searchPlayers,
+  setView,
 } from './playersSlice';
 import styles from './Players.module.css';
 import { Divider, Grid, Input } from '@material-ui/core';
@@ -17,11 +18,11 @@ export function Players() {
   const view = useAppSelector((state) => state.players.view);
   const status = useAppSelector((state) => state.players.status);
   const dispatch = useAppDispatch();
-  const [searchValue, setSearchValue] = useState(null) as any;
+  const [searchValue, setSearchValue] = useState('') as any;
 
   useEffect(() => {
-    if (view == 'all' && size(players) == 0 && status == 'idle') dispatch(fetch());
-  }, [view]);
+    if ((view == 'all' && status == 'idle') || (!searchValue)) dispatch(fetch());
+  }, [view, searchValue]);
 
   return (
     <Grid container spacing={3} justifyContent='center' style={{
@@ -33,15 +34,27 @@ export function Players() {
           fullWidth
           placeholder="Search for players"
           inputProps={{ 'aria-label': 'description' }}
+          value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
       </Grid>
       <div className={styles.row}>
         <button
+          disabled={!searchValue}
           className={styles.asyncButton}
           onClick={() => dispatch(searchPlayers(searchValue))}
         >
           <Search fontSize={'medium'} />
+        </button>
+        <button
+          disabled={!searchValue}
+          className={styles.asyncButton}
+          onClick={() => {
+            setSearchValue('');
+            dispatch(setView('all'));
+          }}
+        >
+          Clear
         </button>
       </div>
       <Grid item xs={12}>
