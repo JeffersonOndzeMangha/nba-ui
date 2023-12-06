@@ -3,7 +3,7 @@ import MainCard from "../../app/components/MainCard";
 import { Player } from "../../app/types/Player";
 import { useAppSelector } from "../../app/hooks";
 import { StarOutline, StarTwoTone } from "@material-ui/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { groupBy, keys } from "lodash";
 
 interface CardListProps {
@@ -17,7 +17,7 @@ const PlayerCardList = (props: CardListProps) => {
     const { list, title, addToFavorites, removeFromFavorites } = props;
     const { favoritePlayers } = useAppSelector((state) => state.players);
     const [filters, setFilters] = useState({}) as any;
-
+    const [viewList, setViewList] = useState(list) as any;
     const teamsFilters = keys(groupBy(list, (player) => player.team.full_name));
     const positionsFilters = keys(groupBy(list, (player) => player.position));
 
@@ -28,6 +28,21 @@ const PlayerCardList = (props: CardListProps) => {
             if (addToFavorites) addToFavorites(player);
         }
     }
+
+    useEffect(() => {
+        console.log('filters', filters);
+        if (!!filters.position.length || !!filters.team.length) {
+            // using an OR operator here because we want to show players that match any of the filters
+            const filteredList = list.filter((player) => {
+                const positionMatch = !!filters.position.length && filters.position.length > 0 && filters.position.includes(player.position);
+                const teamMatch = !!filters.team.length && filters.team.length > 0 && filters.team.includes(player.team.full_name);
+                return positionMatch || teamMatch;
+            });
+            setViewList(filteredList);
+        } else {
+            setViewList(list);
+        }
+    }, [filters.position, filters.team]);
 
     return (
         <MainCard title={title}>
@@ -41,7 +56,7 @@ const PlayerCardList = (props: CardListProps) => {
                     <Table>
                         <TableHead>
                             <TableRow sx={{
-                                '&:first-child td, &:first-child th': { border: 0 }
+                                '&::first-of-type td, &::first-of-type th': { border: 0 }
                             }}>
                                 <TableCell>Name</TableCell>
                                 <TableCell>Position</TableCell>
@@ -75,7 +90,7 @@ const PlayerCardList = (props: CardListProps) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {list.map((player: any) => (
+                            {viewList.map((player: any) => (
                                 <TableRow key={player.id} sx={{
                                     '&:last-child td, &:last-child th': { border: 0 }
                                 }}>
