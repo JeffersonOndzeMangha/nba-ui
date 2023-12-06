@@ -14,7 +14,6 @@ export interface PlayersStateProps {
   favoritePlayers: {
     [key: number] : Player;
   };
-  view: 'filtered' | 'all';
   filters: {
     [key: string]: string | number;
   },
@@ -27,7 +26,7 @@ const initialState: PlayersStateProps = {
   filteredPlayers: {},
   favoritePlayers: {},
   filters: {},
-  view: 'all',
+  currentMeta: {},
   status: 'idle',
 };
 
@@ -50,8 +49,8 @@ export const playersSlice = createSlice({
     removeFromFavorites: (state, action: PayloadAction<Player>) => {
       delete state.favoritePlayers[action.payload.id];
     },
-    setView: (state, action: PayloadAction<'filtered' | 'all'>) => {
-      state.view = action.payload;
+    setMeta: (state, action: PayloadAction<any>) => {
+      state.currentMeta = action.payload;
     }
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -71,32 +70,18 @@ export const playersSlice = createSlice({
   },
 });
 
-export const { setPlayers, addToFavorites, removeFromFavorites, setView  } = playersSlice.actions;
+export const { setPlayers, addToFavorites, removeFromFavorites, setMeta } = playersSlice.actions;
 
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(fetchPlayers(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched. Thunks are
-// typically used to make async requests.
+// The function below is called a thunk and allows us to perform async logic. this one is for fetching players
 export const fetch = createAsyncThunk(
   'players/fetch',
-  async () => {
-    const response = await fetchPlayers();
+  async (search?: string) => {
+    const response = (!!search) ? await fetchPlayers(search) : await fetchPlayers();
     // The value we return becomes the `fulfilled` action payload
     store.dispatch(setPlayers(response.data));
+    store.dispatch(setMeta(response.meta))
     return response;
   }
 );
-
-// We can also write thunks by hand, which may contain both sync and async logic.
-// Here's an example of conditionally dispatching actions based on current state.
-export const searchPlayers =
-  (search: string): AppThunk =>
-  async (dispatch, getState) => {
-    const { data } = await fetchPlayers(search);
-    console.log('response', data);
-    dispatch(setView('filtered'));
-    dispatch(setPlayers(data));
-  };
 
 export default playersSlice.reducer;

@@ -6,7 +6,6 @@ describe('players reducer', () => {
     favoritePlayers: {},
     filteredPlayers: {},
     filters: {},
-    view: 'all',
     status: 'idle',
   };
   it('should handle initial state', () => {

@@ -33,7 +33,6 @@ const PlayerCardList = (props: CardListProps) => {
     }
 
     useEffect(() => {
-        console.log('filters', filters);
         if (!!filters.position.length || !!filters.team.length) {
             // using an OR operator here because we want to show players that match any of the filters
             const filteredList = list.filter((player) => {
