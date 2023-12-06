@@ -1,11 +1,11 @@
 import { Autocomplete, IconButton, InputLabel, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
 import MainCard from "../../app/components/MainCard";
 import { Player } from "../../app/types/Player";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { StarOutline, StarTwoTone } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { groupBy, keys } from "lodash";
-import { Divider, Tab } from "@material-ui/core";
+import { fetch, setNewMeta } from "./playersSlice";
 
 interface CardListProps {
     list: Player[];
@@ -18,6 +18,7 @@ interface CardListProps {
 const PlayerCardList = (props: CardListProps) => {
     const { list, title, pagination, addToFavorites, removeFromFavorites } = props;
     const { favoritePlayers, currentMeta } = useAppSelector((state) => state.players);
+    const dispatch = useAppDispatch();
     const [filters, setFilters] = useState({
         position: [] as any,
         team: [] as any
@@ -32,6 +33,14 @@ const PlayerCardList = (props: CardListProps) => {
         } else {
             if (addToFavorites) addToFavorites(player);
         }
+    }
+
+    const handlePageChange = (event: any, newPage: any) => {
+        dispatch(setNewMeta({ ...currentMeta, page: newPage+1 }));
+    }
+
+    const handleRowsPerPageChange = (event: any) => {
+        dispatch(setNewMeta({ ...currentMeta, per_page: parseInt(event.target.value) }));
     }
 
     useEffect(() => {
@@ -67,11 +76,11 @@ const PlayerCardList = (props: CardListProps) => {
                                     <TablePagination
                                         count={currentMeta.total_count}
                                         page={currentMeta.current_page-1}
-                                        onPageChange={() => { console.log('page change') }}
+                                        onPageChange={handlePageChange}
                                         variant="head"
                                         color="secondary"
                                         rowsPerPage={currentMeta.per_page}
-                                        onRowsPerPageChange={() => { console.log('rows per page') }}
+                                        onRowsPerPageChange={handleRowsPerPageChange}
                                     />
                                 }
                             </TableRow>
@@ -135,11 +144,11 @@ const PlayerCardList = (props: CardListProps) => {
                                     }}
                                     count={currentMeta.total_count}
                                     page={currentMeta.current_page-1}
-                                    onPageChange={() => { console.log('page change') }}
+                                    onPageChange={handlePageChange}
                                     variant="footer"
                                     color="secondary"
                                     rowsPerPage={currentMeta.per_page}
-                                    onRowsPerPageChange={() => { console.log('rows per page') }}
+                                    onRowsPerPageChange={handleRowsPerPageChange}
                                 />
                             }
                             </TableRow>

@@ -12,14 +12,20 @@ import { values } from 'lodash';
 import { Grid, TextField } from '@mui/material';
 
 export function Players() {
-  const { players, favoritePlayers } = useAppSelector((state) => state.players);
+  const { players, favoritePlayers, newMeta } = useAppSelector((state) => state.players);
   const status = useAppSelector((state) => state.players.status);
   const dispatch = useAppDispatch();
   const [searchValue, setSearchValue] = useState('') as any;
 
   useEffect(() => {
-    if ((status == 'idle') || (!searchValue)) dispatch(fetch(searchValue));
+    if ((status == 'idle') || (!searchValue)) dispatch(fetch({ search: searchValue }));
   }, [searchValue]);
+
+  useEffect(() => {
+    if (newMeta) {
+      dispatch(fetch({ newMeta, search: searchValue }));
+    }
+  }, [newMeta]);
 
   return (
     <Grid container spacing={3} justifyContent='center' style={{

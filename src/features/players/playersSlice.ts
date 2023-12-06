@@ -17,6 +17,7 @@ export interface PlayersStateProps {
     [key: string]: string | number;
   },
   currentMeta?: any;
+  newMeta?: any;
   status: 'idle' | 'loading' | 'failed';
 }
 
@@ -26,6 +27,7 @@ const initialState: PlayersStateProps = {
   favoritePlayers: {},
   filters: {},
   currentMeta: {},
+  newMeta: {},
   status: 'idle',
 };
 
@@ -50,6 +52,9 @@ export const playersSlice = createSlice({
     },
     setMeta: (state, action: PayloadAction<any>) => {
       state.currentMeta = action.payload;
+    },
+    setNewMeta: (state, action: PayloadAction<any>) => {
+      state.newMeta = action.payload;
     }
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -69,12 +74,13 @@ export const playersSlice = createSlice({
   },
 });
 
-export const { setPlayers, addToFavorites, removeFromFavorites, setMeta } = playersSlice.actions;
+export const { setPlayers, addToFavorites, removeFromFavorites, setMeta, setNewMeta } = playersSlice.actions;
 
 // The function below is called a thunk and allows us to perform async logic. this one is for fetching players
 export const fetch = createAsyncThunk(
   'players/fetch',
-  async (search?: string, newMeta?: any) => {
+  async (args: any) => {
+    const { search, newMeta } = args;
     const response = (!!search) ? await fetchPlayers(search, newMeta) : await fetchPlayers(undefined, newMeta);
     // The value we return becomes the `fulfilled` action payload
     store.dispatch(setPlayers(response.data));
