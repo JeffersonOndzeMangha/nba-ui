@@ -16,7 +16,10 @@ interface CardListProps {
 const PlayerCardList = (props: CardListProps) => {
     const { list, title, addToFavorites, removeFromFavorites } = props;
     const { favoritePlayers } = useAppSelector((state) => state.players);
-    const [filters, setFilters] = useState({}) as any;
+    const [filters, setFilters] = useState({
+        position: [] as any,
+        team: [] as any
+    }) as any;
     const [viewList, setViewList] = useState(list) as any;
     const teamsFilters = keys(groupBy(list, (player) => player.team.full_name));
     const positionsFilters = keys(groupBy(list, (player) => player.position));
@@ -42,7 +45,7 @@ const PlayerCardList = (props: CardListProps) => {
         } else {
             setViewList(list);
         }
-    }, [filters.position, filters.team]);
+    }, [filters.position, filters.team, list]);
 
     return (
         <MainCard title={title}>
