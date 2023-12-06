@@ -1,23 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
-  favoritePlayersSelector,
+  addToFavorites,
+  fetch,
+  removeFromFavorites,
   searchPlayers,
 } from './playersSlice';
 import styles from './Players.module.css';
 import { Divider, Grid, Input } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
 import PlayerCardList from './PlayerCardList';
+import { add, size, values } from 'lodash';
 
 export function Players() {
-  const favoritePlayers = useAppSelector(favoritePlayersSelector);
-  const players = useAppSelector((state) => state.players.view == 'all' ? state.players.players : state.players.filteredPlayers);
+  const { players, favoritePlayers } = useAppSelector((state) => state.players);
+  const view = useAppSelector((state) => state.players.view);
+  const status = useAppSelector((state) => state.players.status);
   const dispatch = useAppDispatch();
   const [searchValue, setSearchValue] = useState(null) as any;
 
+  useEffect(() => {
+    if (view == 'all' && size(players) == 0 && status == 'idle') dispatch(fetch());
+  }, [view]);
+
   return (
-    <Grid container justifyContent='center' style={{
-      marginTop: 20
+    <Grid container spacing={3} justifyContent='center' style={{
+      marginTop: 20,
+      padding: 10
     }}>
       <Grid item xs={6}>
         <Input
@@ -40,10 +49,17 @@ export function Players() {
       </Grid>
       <Grid item xs={12} md={6}>
         <PlayerCardList
-          list={players}
+          list={values(players)}
           title="Players"
-          addToFavorites={(player) => console.log('add', player)}
-          removeFromFavorites={(player) => console.log('remove', player)}
+          addToFavorites={(player) => dispatch(addToFavorites(player))}
+          removeFromFavorites={(player) => dispatch(removeFromFavorites(player))}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <PlayerCardList
+          list={values(favoritePlayers)}
+          title="Favorites"
+          removeFromFavorites={(player) => dispatch(removeFromFavorites(player))}
         />
       </Grid>
     </Grid>

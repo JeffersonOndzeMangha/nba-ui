@@ -1,46 +1,55 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState, AppThunk } from '../../app/store';
+import { AppThunk, store } from '../../app/store';
 import { fetchPlayers } from './playersAPI';
+import { values } from 'lodash';
+import { Player } from '../../app/types/Player';
 
 export interface PlayersStateProps {
-  players: any[];
-  filteredPlayers: any[];
-  favoritePlayers: any[];
+  players: {
+    [key: number] : Player;
+  };
+  filteredPlayers:{
+    [key: number] : Player;
+  };
+  favoritePlayers: {
+    [key: number] : Player;
+  };
   view: 'filtered' | 'all';
-  filters: any,
+  filters: {
+    [key: string]: string | number;
+  },
+  currentMeta?: any;
   status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: PlayersStateProps = {
-  players: [],
-  filteredPlayers: [],
-  favoritePlayers: [],
-  filters: [],
+  players: {},
+  filteredPlayers: {},
+  favoritePlayers: {},
+  filters: {},
   view: 'all',
   status: 'idle',
 };
 
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(fetchPlayers(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched. Thunks are
-// typically used to make async requests.
-export const fetch = createAsyncThunk(
-  'players/fetch',
-  async () => {
-    const response = await fetchPlayers();
-    // The value we return becomes the `fulfilled` action payload
-    return response.data;
-  }
-);
-
 export const playersSlice = createSlice({
-  name: 'counter',
+  name: 'players',
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    setPlayers: (state, action: PayloadAction<any[]>) => {
-      state.players = [...state.players, action.payload];
+    setPlayers: (state, action: PayloadAction<any>) => {
+      state.players = {
+        ...state.players,
+        ...action.payload.reduce((acc: any, player: any) => {
+          acc[player.id] = player;
+          return acc;
+        }, {})
+      };
+    },
+    addToFavorites: (state, action: PayloadAction<Player>) => {
+      state.favoritePlayers[action.payload.id] = action.payload;
+    },
+    removeFromFavorites: (state, action: PayloadAction<Player>) => {
+      delete state.favoritePlayers[action.payload.id];
     },
     setView: (state, action: PayloadAction<'filtered' | 'all'>) => {
       state.view = action.payload;
@@ -57,17 +66,28 @@ export const playersSlice = createSlice({
         state.status = 'idle';
       })
       .addCase(fetch.rejected, (state) => {
+        console.log('rejected', fetch)
         state.status = 'failed';
       });
   },
 });
 
-export const { setPlayers } = playersSlice.actions;
+export const { setPlayers, addToFavorites, removeFromFavorites  } = playersSlice.actions;
 
-// The function below is called a selector and allows us to select a value from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const favoritePlayersSelector = (state: RootState) => state.players.favoritePlayers;
+// The function below is called a thunk and allows us to perform async logic. It
+// can be dispatched like a regular action: `dispatch(fetchPlayers(10))`. This
+// will call the thunk with the `dispatch` function as the first argument. Async
+// code can then be executed and other actions can be dispatched. Thunks are
+// typically used to make async requests.
+export const fetch = createAsyncThunk(
+  'players/fetch',
+  async () => {
+    const response = await fetchPlayers();
+    // The value we return becomes the `fulfilled` action payload
+    store.dispatch(setPlayers(response.data));
+    return response;
+  }
+);
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
@@ -75,8 +95,9 @@ export const searchPlayers =
   (search: string): AppThunk =>
   (dispatch, getState) => {
     const { players } = getState().players;
-    const filteredPlayers = players.filter((player) => {
-      return player.name.toLowerCase().includes(search.toLowerCase());
+    const filteredPlayers = values(players).filter((player) => {
+      const fullName = `${player.first_name} ${player.last_name}`;
+      return fullName.toLowerCase().includes(search.toLowerCase());
     });
     dispatch(setPlayers(filteredPlayers));
   };
