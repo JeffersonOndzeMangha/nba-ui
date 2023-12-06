@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { StarOutline, StarTwoTone } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { groupBy, keys } from "lodash";
-import { fetch, setNewMeta } from "./playersSlice";
+import { setNewMeta } from "./playersSlice";
 
 interface CardListProps {
     list: Player[];
