@@ -9,9 +9,9 @@ function App() {
       <header className="App-header" data-testid='header'>
         <img src={logo} className="App-logo" alt="logo" width={50} />
       </header>
-      {/* <ErrorBoundary>
+      <ErrorBoundary customError={'We could not load your players list'}>
         <Players />
-      </ErrorBoundary> */}
+      </ErrorBoundary>
     </div>
   );
 }
