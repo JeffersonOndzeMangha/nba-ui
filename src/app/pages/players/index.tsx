@@ -11,9 +11,11 @@ import { Search } from '@material-ui/icons';
 import PlayerCardList from '../../components/PlayerCardList';
 import { values } from 'lodash';
 import { Grid, TextField } from '@mui/material';
+import ErrorBoundary from '../../components/ErrorBoundary';
 
 export function Players() {
-  const { players, favoritePlayers, newMeta, status } = useAppSelector((state) => state.players) ?? {} as PlayersStateProps;
+  const { players, favoritePlayers, newMeta, status, error } = useAppSelector((state) => state.players) ?? {} as PlayersStateProps;
+  // if (error) throw new Error(error.message);
   const dispatch = useAppDispatch();
   const [searchValue, setSearchValue] = useState('') as any;
 
@@ -61,20 +63,24 @@ export function Players() {
       <Grid item xs={12}>
       </Grid>
       <Grid item xs={12} md={6}>
-        <PlayerCardList
-          list={values(players)}
-          title="Players"
-          pagination
-          addToFavorites={(player) => dispatch(addToFavorites(player))}
-          removeFromFavorites={(player) => dispatch(removeFromFavorites(player))}
-        />
+        <ErrorBoundary>
+          <PlayerCardList
+            list={values(players)}
+            title="Players"
+            pagination
+            addToFavorites={(player) => dispatch(addToFavorites(player))}
+            removeFromFavorites={(player) => dispatch(removeFromFavorites(player))}
+          />
+        </ErrorBoundary>
       </Grid>
       <Grid item xs={12} md={6}>
-        <PlayerCardList
-          list={values(favoritePlayers)}
-          title="Favorites"
-          removeFromFavorites={(player) => dispatch(removeFromFavorites(player))}
-        />
+        <ErrorBoundary>
+          <PlayerCardList
+            list={values(favoritePlayers)}
+            title="Favorites"
+            removeFromFavorites={(player) => dispatch(removeFromFavorites(player))}
+          />
+        </ErrorBoundary>
       </Grid>
     </Grid>
   );
