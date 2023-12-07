@@ -120,25 +120,11 @@ const PlayerCardList = (props: CardListProps) => {
                         </TableHead>
                         <TableBody>
                             {viewList.map((player: any) => (
-                                <TableRow key={player.id} sx={{
-                                    '&:last-child td, &:last-child th': { border: 0 }
-                                }}>
-                                    <TableCell><Typography>{player.first_name} {player.last_name}</Typography></TableCell>
-                                    <TableCell><Typography>{player.position}</Typography></TableCell>
-                                    <TableCell><Typography>{player.team.full_name}</Typography></TableCell>
-                                    <TableCell>
-                                        <IconButton
-                                            onClick={() => manageFavorites(player)}
-                                            color={favoritePlayers[player.id] ? 'warning' : 'primary'}
-                                        >
-                                            {
-                                                favoritePlayers[player.id] ?
-                                                    <StarTwoTone /> :
-                                                    <StarOutline />
-                                            }
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
+                                <PlayerRow
+                                    key={player.id}
+                                    player={player}
+                                    manageFavorites={manageFavorites}
+                                />
                             ))}
                             <TableRow>
                             {
@@ -164,5 +150,49 @@ const PlayerCardList = (props: CardListProps) => {
         </MainCard>
     );
 };
+
+const PlayerRow = (props: {
+    player: Player;
+    manageFavorites: (player: Player) => void;
+}) => {
+    const { player, manageFavorites } = props;
+    const { favoritePlayers } = useAppSelector((state) => state.players);
+    const [color, setColor] = useState('');
+    const isFavorite = favoritePlayers[player.id] ? true : false;
+
+    const changeColor = (player: Player) => {
+        if (isFavorite) {
+            // set color to a random color
+            const randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+            setColor(randomColor);
+        }
+    }
+
+    return (
+        <TableRow key={player.id} sx={{
+            '&:hover': {
+                cursor: isFavorite ? 'pointer' : 'not-allowed',
+            },
+            backgroundColor: color
+        }}
+        onClick={() => changeColor(player)}
+        
+        >
+            <TableCell>{player.first_name} {player.last_name}</TableCell>
+            <TableCell>{player.position}</TableCell>
+            <TableCell>{player.team.full_name}</TableCell>
+            <TableCell>
+                <IconButton 
+                    onClick={() => manageFavorites(player)}
+                    color={isFavorite ? 'warning' : 'primary'}
+                >
+                    {
+                        isFavorite ? <StarTwoTone /> : <StarOutline />
+                    }
+                </IconButton>
+            </TableCell>
+        </TableRow>
+    );
+}
 
 export default PlayerCardList;

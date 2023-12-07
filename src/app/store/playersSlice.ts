@@ -37,6 +37,9 @@ export const playersSlice = createSlice({
     setPlayers: (state, action: PayloadAction<any>) => {
       state.players = {
         ...action.payload.reduce((acc: any, player: any) => {
+          if (player.id in state.favoritePlayers) {
+            return acc;
+          }
           acc[player.id] = player;
           return acc;
         }, {})
@@ -44,6 +47,8 @@ export const playersSlice = createSlice({
     },
     addToFavorites: (state, action: PayloadAction<Player>) => {
       state.favoritePlayers[action.payload.id] = action.payload;
+      // remove from players list
+      delete state.players[action.payload.id];
     },
     removeFromFavorites: (state, action: PayloadAction<Player>) => {
       delete state.favoritePlayers[action.payload.id];
