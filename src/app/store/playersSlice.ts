@@ -72,7 +72,6 @@ export const playersSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetch.fulfilled, (state, action) => {
-        console.log('fulfilled', action)
         state.status = 'idle';
       })
       .addCase(fetch.rejected, (state, action) => {
