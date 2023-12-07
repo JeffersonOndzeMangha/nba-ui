@@ -171,7 +171,7 @@ const PlayerRow = (props: {
     return (
         <TableRow key={player.id} sx={{
             '&:hover': {
-                cursor: isFavorite ? 'pointer' : 'not-allowed',
+                cursor: isFavorite ? 'pointer' : 'default',
             },
             backgroundColor: color
         }}
