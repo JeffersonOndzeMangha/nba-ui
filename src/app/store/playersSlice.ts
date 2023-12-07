@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { store, getState } from './store';
+import { store } from './store';
 import { fetchPlayers } from '../api/playersAPI';
 import { Player } from '../types/Player';
 
