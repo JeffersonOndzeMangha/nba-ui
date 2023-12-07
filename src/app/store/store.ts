@@ -1,5 +1,6 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import playersReducer from './playersSlice';
+import snackbarReducer from './snackbarSlice';
 import { debounce } from 'lodash';
 
 // Load state from local storage
@@ -30,6 +31,7 @@ const persistedState = loadState();
 export const store = configureStore({
   reducer: {
     players: playersReducer,
+    snackbar: snackbarReducer
   },
   preloadedState: persistedState, // Set initial state from local storage
 });

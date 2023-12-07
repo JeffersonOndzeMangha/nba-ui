@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import { ErrorBoundary as RErrorBoundary } from 'react-error-boundary';
 import StandardError from './StandardError';
+import { useAppSelector } from '../store/hooks';
+import { Alert, Modal } from '@mui/material';
 
 type ErrorBoundaryProps = {
   children: ReactNode;

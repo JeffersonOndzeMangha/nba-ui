@@ -4,7 +4,6 @@ import { getState } from "../store/store";
 export const fetchPlayers = (search?: string, newMeta?: {
   [key: string]: string | number;
 }) => {
-  const { currentMeta } = getState().players;
 
   return new Promise<{data: any[], meta: any}>((resolve, reject) => {
     // Simulate a 3-second delay using setTimeout

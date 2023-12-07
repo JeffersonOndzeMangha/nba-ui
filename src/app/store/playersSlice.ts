@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { store } from './store';
 import { fetchPlayers } from '../api/playersAPI';
 import { Player } from '../types/Player';
+import { openError, openSuccess } from './snackbarSlice';
 
 export interface PlayersStateProps {
   players: {
@@ -88,11 +89,17 @@ export const fetch = createAsyncThunk(
   'players/fetch',
   async (args: any) => {
     const { search, newMeta } = args;
+    try {
     const response = (!!search) ? await fetchPlayers(search, newMeta) : await fetchPlayers(undefined, newMeta);
     // The value we return becomes the `fulfilled` action payload
     store.dispatch(setPlayers(response?.data));
-    store.dispatch(setMeta(response?.meta))
+    store.dispatch(setMeta(response?.meta));
+    store.dispatch(openSuccess('Players fetched successfully'));
     return response;
+    } catch (error) {
+      store.dispatch(openError('Error fetching players'));
+      return error;
+    }
   }
 );
 

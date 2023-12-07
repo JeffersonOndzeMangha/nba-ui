@@ -6,6 +6,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
 import ErrorBoundary from './app/components/ErrorBoundary';
+import Snackbar from './app/components/Snackbar';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
@@ -13,9 +14,10 @@ const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
+        <ErrorBoundary>
+          <Snackbar />
+          <App />
+        </ErrorBoundary>
     </Provider>
   </React.StrictMode>
 );
