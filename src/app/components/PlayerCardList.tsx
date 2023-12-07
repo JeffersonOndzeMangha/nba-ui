@@ -6,17 +6,19 @@ import { StarOutline, StarTwoTone } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { groupBy, keys } from "lodash";
 import { setNewMeta } from "../store/playersSlice";
+import CircularProgressWithLabel from "./CircularProgressWithLabel";
 
 interface CardListProps {
     list: Player[];
     title: string;
     pagination?: boolean;
+    status?: string;
     addToFavorites?: (player: any) => void;
     removeFromFavorites: (player: any) => void;
 }
 
 const PlayerCardList = (props: CardListProps) => {
-    const { list, title, pagination, addToFavorites, removeFromFavorites } = props;
+    const { list, title, pagination, status, addToFavorites, removeFromFavorites } = props;
     const { favoritePlayers, currentMeta } = useAppSelector((state) => state.players);
     const dispatch = useAppDispatch();
     const [filters, setFilters] = useState({
@@ -60,11 +62,14 @@ const PlayerCardList = (props: CardListProps) => {
     return (
         <MainCard title={title}>
             {
-                list.length == 0 &&
+                 status == 'loading' && <CircularProgressWithLabel label="Loading players..." />
+            }
+            {
+                list.length == 0 && status != 'loading' &&
                 <Typography>No players in this list.</Typography>
             }
             {
-                list.length > 0 &&
+                list.length > 0 && status != 'loading' &&
                 <TableContainer>
                     <Table>
                         <TableHead>

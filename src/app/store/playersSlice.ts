@@ -86,8 +86,8 @@ export const fetch = createAsyncThunk(
     const { search, newMeta } = args;
     const response = (!!search) ? await fetchPlayers(search, newMeta) : await fetchPlayers(undefined, newMeta);
     // The value we return becomes the `fulfilled` action payload
-    store.dispatch(setPlayers(response.data));
-    store.dispatch(setMeta(response.meta))
+    store.dispatch(setPlayers(response?.data));
+    store.dispatch(setMeta(response?.meta))
     return response;
   }
 );

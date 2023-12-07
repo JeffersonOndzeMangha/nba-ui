@@ -14,7 +14,7 @@ import { Grid, TextField } from '@mui/material';
 import ErrorBoundary from '../../components/ErrorBoundary';
 
 export function Players() {
-  const { players, favoritePlayers, newMeta, status, error } = useAppSelector((state) => state.players) ?? {} as PlayersStateProps;
+  const { players, favoritePlayers, newMeta, status } = useAppSelector((state) => state.players) ?? {} as PlayersStateProps;
   // if (error) throw new Error(error.message);
   const dispatch = useAppDispatch();
   const [searchValue, setSearchValue] = useState('') as any;
@@ -38,13 +38,13 @@ export function Players() {
         <TextField
           fullWidth
           variant={'standard'}
-          placeholder="Search for players"
+          placeholder="Search for players by name"
           data-testid="search-input"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
       </Grid>
-      <div className={styles.row}>
+      {/* <div className={styles.row}>
         <button
           disabled={!searchValue}
           className={styles.asyncButton}
@@ -59,7 +59,7 @@ export function Players() {
         >
           Clear
         </button>
-      </div>
+      </div> */}
       <Grid item xs={12}>
       </Grid>
       <Grid item xs={12} md={6}>
@@ -68,6 +68,7 @@ export function Players() {
             list={values(players)}
             title="Players"
             pagination
+            status={status}
             addToFavorites={(player) => dispatch(addToFavorites(player))}
             removeFromFavorites={(player) => dispatch(removeFromFavorites(player))}
           />
