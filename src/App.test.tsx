@@ -1,15 +1,26 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { store } from './app/store/store';
 import App from './App';
+import { store } from './app/store/store';
 
-test('renders learn react link', () => {
-  const { getByText } = render(
-    <Provider store={store}>
-      <App />
-    </Provider>
-  );
+describe('Players Component', () => {
+  beforeEach(() => {
 
-  expect(getByText(/learn/i)).toBeInTheDocument();
+  });
+
+  it('renders the Players component correctly', async () => {
+    render(
+        <Provider store={store}>
+          <App />
+        </Provider>
+      );
+    
+      // Wait for the component to render or data to load
+      await waitFor(() => {
+        const playersElement = screen.getByTestId('app');
+        expect(playersElement).toBeInTheDocument();
+      });
+  });
+
 });

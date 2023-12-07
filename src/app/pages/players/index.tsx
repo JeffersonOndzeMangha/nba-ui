@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import {
+  PlayersStateProps,
   addToFavorites,
   fetch,
   removeFromFavorites
@@ -12,8 +13,7 @@ import { values } from 'lodash';
 import { Grid, TextField } from '@mui/material';
 
 export function Players() {
-  const { players, favoritePlayers, newMeta } = useAppSelector((state) => state.players);
-  const status = useAppSelector((state) => state.players.status);
+  const { players, favoritePlayers, newMeta, status } = useAppSelector((state) => state.players) ?? {} as PlayersStateProps;
   const dispatch = useAppDispatch();
   const [searchValue, setSearchValue] = useState('') as any;
 
@@ -28,7 +28,7 @@ export function Players() {
   }, [newMeta]);
 
   return (
-    <Grid container spacing={3} justifyContent='center' style={{
+    <Grid data-testid="players" container spacing={3} justifyContent='center' style={{
       marginTop: 20,
       padding: 10
     }}>
@@ -37,7 +37,7 @@ export function Players() {
           fullWidth
           variant={'standard'}
           placeholder="Search for players"
-          inputProps={{ 'aria-label': 'description' }}
+          data-testid="search-input"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />

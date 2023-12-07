@@ -13,9 +13,6 @@ export interface PlayersStateProps {
   favoritePlayers: {
     [key: number] : Player;
   };
-  filters: {
-    [key: string]: string | number;
-  },
   currentMeta?: any;
   newMeta?: any;
   status: 'idle' | 'loading' | 'failed';
@@ -25,7 +22,6 @@ const initialState: PlayersStateProps = {
   players: {},
   filteredPlayers: {},
   favoritePlayers: {},
-  filters: {},
   currentMeta: {},
   newMeta: {},
   status: 'idle',

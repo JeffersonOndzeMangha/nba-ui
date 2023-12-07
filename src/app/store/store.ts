@@ -21,7 +21,7 @@ const saveState = debounce((state: RootState) => {
     const serializedState = JSON.stringify(state);
     localStorage.setItem('appState', serializedState);
   } catch (err) {
-    // Handle errors here
+    console.warn('Issue saving state to local storage', err);
   }
 }, 3000);
 

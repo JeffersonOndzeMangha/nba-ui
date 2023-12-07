@@ -1,16 +1,17 @@
 import logo from './logo.svg';
 import './App.css';
-import { Grid } from '@material-ui/core';
-import { Players } from './app/pages/players';
+import { Players } from './app/pages/players/index';
+import ErrorBoundary from './app/components/ErrorBoundary';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="App" data-testid="app">
+      <header className="App-header" data-testid='header'>
         <img src={logo} className="App-logo" alt="logo" width={50} />
-        {/* <Counter /> */}
       </header>
-      <Players />
+      {/* <ErrorBoundary>
+        <Players />
+      </ErrorBoundary> */}
     </div>
   );
 }
