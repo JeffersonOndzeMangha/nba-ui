@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { store } from './store';
-import { fetchPlayers } from '../api/playersAPI';
-import { Player } from '../types/Player';
+import { store } from '../store';
+import fetchPlayers from '../../api/playersAPI';
+import { Player } from '../../types/Player';
 import { openError, openSuccess } from './snackbarSlice';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 export interface PlayersStateProps {
   players: {
@@ -90,7 +92,7 @@ export const fetch = createAsyncThunk(
   async (args: any) => {
     const { search, newMeta } = args;
     try {
-    const response = (!!search) ? await fetchPlayers(search, newMeta) : await fetchPlayers(undefined, newMeta);
+    const response = (!!search) ? await fetchPlayers(search, newMeta) : await fetchPlayers(null, newMeta);
     // The value we return becomes the `fulfilled` action payload
     store.dispatch(setPlayers(response?.data));
     store.dispatch(setMeta(response?.meta));
@@ -103,4 +105,4 @@ export const fetch = createAsyncThunk(
   }
 );
 
-export default playersSlice.reducer;
+export default persistReducer({ key: 'players', storage, keyPrefix: 'nba-ui-' }, playersSlice.reducer);

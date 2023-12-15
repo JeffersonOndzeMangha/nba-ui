@@ -1,12 +1,12 @@
-import { Autocomplete, IconButton, InputLabel, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
+import { Autocomplete, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
 import MainCard from "./MainCard";
 import { Player } from "../types/Player";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { StarOutline, StarTwoTone } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { groupBy, keys } from "lodash";
-import { setNewMeta } from "../store/playersSlice";
+import { setNewMeta } from "../store/reducers/playersSlice";
 import CircularProgressWithLabel from "./CircularProgressWithLabel";
+import PlayerRow from "./PlayerRow";
 
 interface CardListProps {
     list: Player[];
@@ -17,7 +17,29 @@ interface CardListProps {
     removeFromFavorites: (player: any) => void;
 }
 
-const PlayerCardList = (props: CardListProps) => {
+/**
+ * PlayerCardList is a component that displays a list of players in a table format.
+ *
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {Player[]} props.list - The list of players to display.
+ * @param {string} props.title - The title for the player list.
+ * @param {boolean} [props.pagination] - Whether to display pagination controls.
+ * @param {string} [props.status] - The status of the player list (e.g., 'loading', 'loaded').
+ * @param {(player: Player) => void} [props.addToFavorites] - A function to add a player to favorites.
+ * @param {(player: Player) => void} props.removeFromFavorites - A function to remove a player from favorites.
+ *
+ * @returns {ReactNode} The PlayerCardList component.
+ *
+ * @example
+ * // Basic usage:
+ * <PlayerCardList list={players} title="Player List" removeFromFavorites={removeFromFavorites} />
+ *
+ * // With pagination controls:
+ * <PlayerCardList list={players} title="Player List" pagination removeFromFavorites={removeFromFavorites} />
+ */
+const PlayerCardList = (props: CardListProps): JSX.Element => {
     const { list, title, pagination, status, addToFavorites, removeFromFavorites } = props;
     const { favoritePlayers, currentMeta } = useAppSelector((state) => state.players);
     const dispatch = useAppDispatch();
@@ -37,11 +59,11 @@ const PlayerCardList = (props: CardListProps) => {
         }
     }
 
-    const handlePageChange = (event: any, newPage: any) => {
+    const handlePageChange = (_event: any, newPage: any): void => {
         dispatch(setNewMeta({ ...currentMeta, page: newPage+1 }));
     }
 
-    const handleRowsPerPageChange = (event: any) => {
+    const handleRowsPerPageChange = (event: any): void => {
         dispatch(setNewMeta({ ...currentMeta, per_page: parseInt(event.target.value) }));
     }
 
@@ -59,17 +81,14 @@ const PlayerCardList = (props: CardListProps) => {
         }
     }, [filters.position, filters.team, list]);
 
+    if (status === 'error') throw new Error('Error loading players.'); // this should trigger the ErrorBoundary component
+
     return (
         <MainCard title={title}>
             {
-                 status == 'loading' && <CircularProgressWithLabel label="Loading players..." />
-            }
-            {
-                list.length == 0 && status != 'loading' &&
-                <Typography>No players in this list.</Typography>
-            }
-            {
-                list.length > 0 && status != 'loading' &&
+                (status === 'loading') && <CircularProgressWithLabel label="Loading players..." /> ||
+                (status !== 'loading' && list.length == 0) && <Typography>No players in this list.</Typography> ||
+                (status != 'loading' && list.length > 0) &&
                 <TableContainer>
                     <Table>
                         <TableHead>
@@ -150,49 +169,5 @@ const PlayerCardList = (props: CardListProps) => {
         </MainCard>
     );
 };
-
-const PlayerRow = (props: {
-    player: Player;
-    manageFavorites: (player: Player) => void;
-}) => {
-    const { player, manageFavorites } = props;
-    const { favoritePlayers } = useAppSelector((state) => state.players);
-    const [color, setColor] = useState('');
-    const isFavorite = favoritePlayers[player.id] ? true : false;
-
-    const changeColor = (player: Player) => {
-        if (isFavorite) {
-            // set color to a random color
-            const randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
-            setColor(randomColor);
-        }
-    }
-
-    return (
-        <TableRow key={player.id} sx={{
-            '&:hover': {
-                cursor: isFavorite ? 'pointer' : 'default',
-            },
-            backgroundColor: color
-        }}
-        onClick={() => changeColor(player)}
-        
-        >
-            <TableCell>{player.first_name} {player.last_name}</TableCell>
-            <TableCell>{player.position}</TableCell>
-            <TableCell>{player.team.full_name}</TableCell>
-            <TableCell>
-                <IconButton 
-                    onClick={() => manageFavorites(player)}
-                    color={isFavorite ? 'warning' : 'primary'}
-                >
-                    {
-                        isFavorite ? <StarTwoTone /> : <StarOutline />
-                    }
-                </IconButton>
-            </TableCell>
-        </TableRow>
-    );
-}
 
 export default PlayerCardList;

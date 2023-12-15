@@ -1,22 +1,19 @@
 import { forwardRef, CSSProperties, ReactNode, Ref } from 'react';
-
-// material-ui
 import { useTheme } from '@mui/material/styles';
-import { Card, CardContent, CardHeader, Divider, Typography, CardProps, CardHeaderProps, CardContentProps } from '@mui/material';
+import { Card, CardContent, CardHeader, Divider, CardProps, CardHeaderProps, CardContentProps } from '@mui/material';
+import { KeyedObject } from '../types/types';
 
-// types
-export type KeyedObject = {
-    [key: string]: string | number | KeyedObject | any;
-};
-
-// header style
+/**
+ * CSS styles for the card header.
+ */
 const headerSX = {
   p: 2.5,
   '& .MuiCardHeader-action': { m: '0px auto', alignSelf: 'center' }
 };
 
-// ==============================|| CUSTOM - MAIN CARD ||============================== //
-
+/**
+ * MainCard component props.
+ */
 export interface MainCardProps extends KeyedObject {
   border?: boolean;
   boxShadow?: boolean;
@@ -37,6 +34,55 @@ export interface MainCardProps extends KeyedObject {
   modal?: boolean;
 }
 
+/**
+ * MainCard is a customizable Material-UI Card component with extended features.
+ *
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {boolean} [props.border=true] - Whether to display a border around the card.
+ * @param {boolean} [props.boxShadow] - Whether to display a box shadow around the card.
+ * @param {ReactNode | string} props.children - The content to be displayed within the card.
+ * @param {ReactNode | string} [props.subheader] - The subheader content for the card.
+ * @param {CSSProperties} [props.style] - Additional CSS styles for the card.
+ * @param {boolean} [props.content=true] - Whether to display the card content section.
+ * @param {CardContentProps['sx']} [props.contentSX={}] - Additional CSS styles for the card content section.
+ * @param {boolean} [props.darkTitle] - Whether to use dark text color for the card title.
+ * @param {boolean} [props.divider=true] - Whether to display a divider below the card title.
+ * @param {number} [props.elevation] - The elevation level for the card.
+ * @param {CardHeaderProps['action']} [props.secondary] - Additional action element to be displayed on the card header.
+ * @param {string} [props.shadow] - The CSS shadow property for the card.
+ * @param {CSSProperties} [props.sx={}] - Additional CSS styles for the card.
+ * @param {ReactNode | string} [props.title] - The title content for the card.
+ * @param {boolean} [props.codeHighlight=false] - Whether to apply code highlighting styles.
+ * @param {string} [props.codeString] - The code string to be highlighted.
+ * @param {boolean} [props.modal=false] - Whether to display the card as a modal.
+ * @param {...CardProps} [props.others] - Additional Material-UI Card props.
+ *
+ * @returns {ReactNode} The MainCard component.
+ *
+ * @example
+ * // Basic usage:
+ * <MainCard title="My Card Title">
+ *   <CardContent>
+ *     Card Content
+ *   </CardContent>
+ * </MainCard>
+ *
+ * // With custom subheader and no border:
+ * <MainCard title="Custom Card" subheader="Subheader" border={false}>
+ *   <CardContent>
+ *     Card Content
+ *   </CardContent>
+ * </MainCard>
+ *
+ * // Using code highlighting:
+ * <MainCard title="Code Example" codeHighlight codeString="const greeting = 'Hello, World!';">
+ *   <CardContent>
+ *     Code content
+ *   </CardContent>
+ * </MainCard>
+ */
 const MainCard = forwardRef(
   (
     {
@@ -75,29 +121,29 @@ const MainCard = forwardRef(
           borderColor: theme.palette.divider,
           boxShadow: boxShadow && (!border || theme.palette.mode === 'dark') ? shadow : 'inherit',
           ':hover': {
-            boxShadow: boxShadow ? shadow : 'inherit'
+            boxShadow: boxShadow ? shadow : 'inherit',
           },
           ...(codeHighlight && {
             '& pre': {
               m: 0,
               p: '12px !important',
               fontFamily: theme.typography.fontFamily,
-              fontSize: '0.75rem'
-            }
+              fontSize: '0.75rem',
+            },
           }),
           ...(modal && {
             position: 'absolute' as const,
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: { xs: `calc( 100% - 50px)`, sm: 'auto' },
+            width: { xs: `calc(100% - 50px)`, sm: 'auto' },
             '& .MuiCardContent-root': {
               overflowY: 'auto',
               minHeight: 'auto',
-              maxHeight: `calc(100vh - 200px)`
-            }
+              maxHeight: `calc(100vh - 200px)`,
+            },
           }),
-          ...sx
+          ...sx,
         }}
       >
         {/* card header and action */}
@@ -112,7 +158,6 @@ const MainCard = forwardRef(
         )}
         {/* content & header divider */}
         {title && divider && <Divider />}
-
         {/* card content */}
         {content && <CardContent sx={contentSX}>{children}</CardContent>}
         {!content && children}
@@ -122,3 +167,4 @@ const MainCard = forwardRef(
 );
 
 export default MainCard;
+

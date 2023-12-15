@@ -15,8 +15,10 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
         <ErrorBoundary>
-          <Snackbar />
-          <App />
+          <>
+            <Snackbar />
+            <App />
+          </>
         </ErrorBoundary>
     </Provider>
   </React.StrictMode>

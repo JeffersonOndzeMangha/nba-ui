@@ -1,157 +1,124 @@
-import playersReducer, { PlayersStateProps } from '../store/playersSlice';
+import {
+  playersSlice,
+  setPlayers,
+  addToFavorites,
+  removeFromFavorites,
+  setMeta,
+  setNewMeta,
+  resetError,
+  PlayersStateProps,
+} from '../store/reducers/playersSlice';
+import { Player } from '../types/Player';
 
-describe('players reducer', () => {
-  const initialState: PlayersStateProps = {
-    players: {},
-    favoritePlayers: {},
-    filteredPlayers: {},
-    status: 'idle',
-    error: null,
-  };
+describe('playersSlice', () => {
+  let initialState: PlayersStateProps;
+  let player1: Player;
+  let player2: Player;
 
-  it('should handle initial state', () => {
-    expect(playersReducer(initialState, { type: 'unknown' })).toEqual({
+  beforeAll(() => {
+    initialState = {
       players: {},
-      favoritePlayers: {},
       filteredPlayers: {},
+      favoritePlayers: {},
+      currentMeta: {},
+      newMeta: {},
       status: 'idle',
       error: null,
-    });
-  });
+    };
 
-  it('should handle setPlayers', () => {
-    const actual = playersReducer(initialState, {
-      type: 'players/setPlayers',
-      payload: [
-        {
-          id: 1,
-          first_name: 'John',
-          last_name: 'Doe',
-          position: 'G',
-          height_feet: 6,
-          height_inches: 5,
-          weight_pounds: 200,
-        },
-      ],
-    });
-    expect(actual.players).toEqual({
-      1: {
+    player1 = {
+      id: 1,
+      first_name: 'Player',
+      last_name: 'Player 1',
+      position: 'PG',
+      height_feet: 6,
+      height_inches: 3,
+      weight_pounds: 200,
+      team: {
         id: 1,
-        first_name: 'John',
-        last_name: 'Doe',
-        position: 'G',
-        height_feet: 6,
-        height_inches: 5,
-        weight_pounds: 200,
+        abbreviation: 'PHI',
+        city: 'Philadelphia',
+        conference: 'East',
+        division: 'Atlantic',
+        full_name: 'Philadelphia 76ers',
+        name: '76ers',
       },
+    }
+    player2 = {
+      id: 2,
+      first_name: 'Player',
+      last_name: 'Player 2',
+      position: 'PG',
+      height_feet: 6,
+      height_inches: 3,
+      weight_pounds: 200,
+      team: {
+        id: 2,
+        abbreviation: 'PHI',
+        city: 'Philadelphia',
+        conference: 'East',
+        division: 'Atlantic',
+        full_name: 'Philadelphia 76ers',
+        name: '76ers',
+      },
+    };
+  });
+  
+  it('should handle setPlayers with initial state', () => {
+    const action = setPlayers([player1, player2]);
+
+    const newState = playersSlice.reducer(initialState, action);
+
+    expect(newState.players).toEqual({
+      1: player1,
+      2: player2,
     });
   });
 
-  it('should handle addToFavorites', () => {
-    const actual = playersReducer(initialState, {
-      type: 'players/addToFavorites',
-      payload: {
-        id: 1,
-        first_name: 'John',
-        last_name: 'Doe',
-        position: 'G',
-        height_feet: 6,
-        height_inches: 5,
-        weight_pounds: 200,
-      },
-    });
-    expect(actual.favoritePlayers).toEqual({
-      1: {
-        id: 1,
-        first_name: 'John',
-        last_name: 'Doe',
-        position: 'G',
-        height_feet: 6,
-        height_inches: 5,
-        weight_pounds: 200,
-      },
+  it('should handle addToFavorites with initial state', () => {
+
+    const action = addToFavorites(player1);
+
+    const newState = playersSlice.reducer(initialState, action);
+
+    expect(newState.players).toEqual({});
+    expect(newState.favoritePlayers).toEqual({
+      1: player1,
     });
   });
 
-  it('should handle removeFromFavorites', () => {
-    const actual = playersReducer(
-      {
-        ...initialState,
-        favoritePlayers: {
-          1: {
-            id: 1,
-            first_name: 'John',
-            last_name: 'Doe',
-            position: 'G',
-            height_feet: 6,
-            height_inches: 5,
-            weight_pounds: 200,
-            team: {
-              id: 1,
-              abbreviation: 'BOS',
-              city: 'Boston',
-              conference: 'East',
-              division: 'Atlantic',
-              full_name: 'Boston Celtics',
-              name: 'Celtics',
-            }
-          },
-        },
-      },
-      {
-        type: 'players/removeFromFavorites',
-        payload: {
-          id: 1,
-          first_name: 'John',
-          last_name: 'Doe',
-          position: 'G',
-          height_feet: 6,
-          height_inches: 5,
-          weight_pounds: 200,
-        },
-      }
-    );
-    expect(actual.favoritePlayers).toEqual({});
+  it('should handle removeFromFavorites with initial state', () => {
+    const action = removeFromFavorites(player1);
+
+    const newState = playersSlice.reducer(initialState, action);
+
+    expect(newState.favoritePlayers).toEqual({});
   });
 
-  it('should handle setMeta', () => {
-    const actual = playersReducer(initialState, {
-      type: 'players/setMeta',
-      payload: {
-        total_pages: 1,
-        current_page: 1,
-        next_page: null,
-        per_page: 25,
-        total_count: 25,
-      },
-    });
-    expect(actual.currentMeta).toEqual({
-      total_pages: 1,
-      current_page: 1,
-      next_page: null,
-      per_page: 25,
-      total_count: 25,
-    });
+  it('should handle setMeta with initial state', () => {
+    const meta = { page: 1, per_page: 10 };
+    const action = setMeta(meta);
+
+    const newState = playersSlice.reducer(initialState, action);
+
+    expect(newState.currentMeta).toEqual(meta);
   });
 
-  it('should handle setNewMeta', () => {
-    const actual = playersReducer(initialState, {
-      type: 'players/setNewMeta',
-      payload: {
-        total_pages: 1,
-        current_page: 1,
-        next_page: null,
-        per_page: 25,
-        total_count: 25,
-      },
-    });
-    expect(actual.newMeta).toEqual({
-      total_pages: 1,
-      current_page: 1,
-      next_page: null,
-      per_page: 25,
-      total_count: 25,
-    });
+  it('should handle setNewMeta with initial state', () => {
+    const newMeta = { page: 2, per_page: 20 };
+    const action = setNewMeta(newMeta);
+
+    const newState = playersSlice.reducer(initialState, action);
+
+    expect(newState.newMeta).toEqual(newMeta);
   });
 
+  it('should handle resetError with initial state', () => {
+    const action = resetError();
+
+    const newState = playersSlice.reducer({...initialState, status: 'failed', error: 'Some error'}, action);
+
+    expect(newState.status).toEqual('idle');
+    expect(newState.error).toBeNull();
+  });
 });

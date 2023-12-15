@@ -3,29 +3,29 @@ import { SyntheticEvent } from 'react';
 // material-ui
 import { Alert, Button, Fade, Grow, IconButton, Slide, SlideProps } from '@mui/material';
 import MuiSnackbar from '@mui/material/Snackbar';
-import { KeyedObject } from './MainCard';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { closeSnackbar, openError } from '../store/snackbarSlice';
+import { closeSnackbar } from '../store/reducers/snackbarSlice';
 import { CloseOutlined } from '@material-ui/icons';
+import { KeyedObject } from '../types/types';
 
-// animation function
-function TransitionSlideLeft(props: SlideProps) {
+// animation functions
+function TransitionSlideLeft(props: SlideProps): JSX.Element {
   return <Slide {...props} direction="left" />;
 }
 
-function TransitionSlideUp(props: SlideProps) {
+function TransitionSlideUp(props: SlideProps): JSX.Element {
   return <Slide {...props} direction="up" />;
 }
 
-function TransitionSlideRight(props: SlideProps) {
+function TransitionSlideRight(props: SlideProps): JSX.Element {
   return <Slide {...props} direction="right" />;
 }
 
-function TransitionSlideDown(props: SlideProps) {
+function TransitionSlideDown(props: SlideProps): JSX.Element {
   return <Slide {...props} direction="down" />;
 }
 
-function GrowTransition(props: SlideProps) {
+function GrowTransition(props: SlideProps): JSX.Element {
   return <Grow {...props} />;
 }
 
@@ -39,14 +39,27 @@ const animation: KeyedObject = {
   Fade
 };
 
-// ==============================|| SNACKBAR ||============================== //
-
-const Snackbar = () => {
+/**
+ * Snackbar is a reusable React component for displaying snackbars or alerts with customizable options.
+ *
+ * @component
+ *
+ * @example
+ * // Basic usage:
+ * <Snackbar />
+ */
+const Snackbar = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const snackbar = useAppSelector((state: any) => state.snackbar);
   const { actionButton, anchorOrigin, alert, close, message, open, transition, variant } = snackbar;
 
-  const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
+  /**
+   * Handles the close event of the snackbar.
+   *
+   * @param {SyntheticEvent | Event} _event - The event object.
+   * @param {string} reason - The reason for closing the snackbar.
+   */
+  const handleClose = (_event: SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }

@@ -1,48 +1,38 @@
-// third-party
-import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit';
+// Import necessary libraries and dependencies
 import { useDispatch as useAppDispatch, useSelector as useAppSelector, TypedUseSelectorHook } from 'react-redux';
-import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, persistReducer } from 'redux-persist';
-import playersSilceReducer from './playersSlice';
-import snackbarSliceReducer from './snackbarSlice';
-import createWebStorage from 'redux-persist/es/storage/createWebStorage';
+import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import reducers from './reducers';
+import { configureStore } from '@reduxjs/toolkit';
 
-
-const persistConfig = {
-  key: 'appData', // Change this key to suit your app
-  storage: createWebStorage('local'),
-};
-
-const playersReducer = persistReducer(persistConfig, playersSilceReducer);
-
+// Configure the Redux store
 const store = configureStore({
-  reducer: {
-    players: playersReducer,
-    snackbar: snackbarSliceReducer
-  },
+  reducer: reducers,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
-      }
-    })
+        // Ignore certain actions for serialization checks
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
-const persister = persistStore(store);
-
+// Extract the dispatch function from the store
 const { dispatch } = store;
 
+// Typed hook for dispatching actions
 const useDispatch = () => useAppDispatch<AppDispatch>();
+
+// Typed hook for accessing the store's state
 const useSelector: TypedUseSelectorHook<RootState> = useAppSelector;
 
+// Define additional types
+export type AppDispatch = typeof store.dispatch; // Type for the dispatch function
+export type RootState = ReturnType<typeof store.getState>; // Type for the complete store state
+
+// Initialize the redux-persist persister
+const persister = persistStore(store);
+
+export const getState = store.getState; // Function to get the current store state
+
+// Export store, dispatch, persister, useSelector, and useDispatch
 export { store, dispatch, persister, useSelector, useDispatch };
-
-
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
-export const getState = store.getState;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;

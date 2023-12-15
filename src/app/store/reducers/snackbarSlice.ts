@@ -1,6 +1,6 @@
 import { AlertProps, SnackbarOrigin } from '@mui/material';
 import { createSlice } from '@reduxjs/toolkit';
-import { AppThunk } from './store';
+import { dispatch } from '../store';
 
 export interface SnackbarProps {
     action: boolean;
@@ -65,31 +65,31 @@ export default snackbar.reducer;
 
 export const { closeSnackbar, openSnackbar } = snackbar.actions;
 
-export const openError = (message: string): AppThunk => (dispatch) => {
-    const snackbarData = {
-      message,
-      open: true,
-      variant: 'alert',
-      alert: {
-        color: 'error',
-      },
-      close: true,
-    };
-    
-    dispatch(openSnackbar(snackbarData));
+export const openError = (message: string) => () => {
+  const snackbarData = {
+    message,
+    open: true,
+    variant: 'alert',
+    alert: {
+      color: 'error',
+    },
+    close: true,
   };
   
-  export const openSuccess = (message: string): AppThunk => (dispatch) => {
-    const snackbarData = {
-      message,
-      open: true,
-      variant: 'alert',
-      alert: {
-        color: 'success',
-      },
-      close: true,
-    };
-    
-    dispatch(openSnackbar(snackbarData));
+  dispatch(openSnackbar(snackbarData));
+};
+
+export const openSuccess = (message: string) => () => {
+  const snackbarData = {
+    message,
+    open: true,
+    variant: 'alert',
+    alert: {
+      color: 'success',
+    },
+    close: true,
   };
+  
+  dispatch(openSnackbar(snackbarData));
+};
 
