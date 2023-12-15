@@ -2,18 +2,20 @@ import { AlertProps, SnackbarOrigin } from '@mui/material';
 import { createSlice } from '@reduxjs/toolkit';
 import { dispatch } from '../store';
 
+// Define the shape of the Snackbar state
 export interface SnackbarProps {
-    action: boolean;
-    open: boolean;
-    message: string;
-    anchorOrigin: SnackbarOrigin;
-    variant: string;
-    alert: AlertProps;
-    transition: string;
-    close: boolean;
-    actionButton: boolean;
-  }
+  action: boolean;
+  open: boolean;
+  message: string;
+  anchorOrigin: SnackbarOrigin;
+  variant: string;
+  alert: AlertProps;
+  transition: string;
+  close: boolean;
+  actionButton: boolean;
+}
 
+// Define the initial state for the Snackbar slice
 const initialState: SnackbarProps = {
   action: false,
   open: false,
@@ -32,15 +34,24 @@ const initialState: SnackbarProps = {
   actionButton: false
 };
 
-// ==============================|| SLICE - SNACKBAR ||============================== //
-
+// Create the Snackbar slice with reducers and actions
 const snackbar = createSlice({
   name: 'snackbar',
   initialState,
   reducers: {
     openSnackbar(state, action) {
-      const { open, message, anchorOrigin, variant, alert, transition, close, actionButton } = action.payload;
+      const {
+        open,
+        message,
+        anchorOrigin,
+        variant,
+        alert,
+        transition,
+        close,
+        actionButton
+      } = action.payload;
 
+      // Update the state with the payload values or use initial values if not provided
       state.action = !state.action;
       state.open = open || initialState.open;
       state.message = message || initialState.message;
@@ -61,10 +72,13 @@ const snackbar = createSlice({
   }
 });
 
+// Export the reducer
 export default snackbar.reducer;
 
+// Export the actions
 export const { closeSnackbar, openSnackbar } = snackbar.actions;
 
+// Helper functions to open error and success snackbar messages
 export const openError = (message: string) => () => {
   const snackbarData = {
     message,
@@ -92,4 +106,3 @@ export const openSuccess = (message: string) => () => {
   
   dispatch(openSnackbar(snackbarData));
 };
-
